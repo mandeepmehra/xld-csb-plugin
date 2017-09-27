@@ -1,4 +1,4 @@
-package ext.deployit.plugin.csb;
+package ext.deployit.plugin.csb.exporter;
 
 import org.jboss.logging.MDC;
 import org.slf4j.Logger;
