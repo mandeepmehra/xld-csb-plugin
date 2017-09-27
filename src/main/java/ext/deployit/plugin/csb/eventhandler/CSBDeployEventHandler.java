@@ -21,16 +21,23 @@ public class CSBDeployEventHandler implements EventHandler {
 	@Override
 	public void handleEvent(final AuditableDeployitEvent event) throws CSBPluginException {
 
-		logger.info("Exporting deploy event {}", event.message);
 		if (!isDeployEvent(event))
 			return;
 
-		// TODO: Start in new thread
-		try {
-			eventExporter.exportEvent(event);
-		} catch (CSBPluginException ex) {
-			logger.error("Error in exporting release", ex);
-		}
+		logger.info("Exporting deploy event {}", event.message);
+
+		EXECUTOR_SERVICE.submit(new Runnable() {
+			public void run() {
+				try {
+					eventExporter.exportEvent(event);
+				} catch (CSBPluginException exception) {
+					logger.error("Exception trying to export event: {}", exception);
+				} catch (Exception exception) {
+					logger.error("Generic Exception trying to export event: {}", event.message, exception);
+				}
+			}
+		});
+
 	}
 
 	public boolean isDeployEvent(final AuditableDeployitEvent event) {

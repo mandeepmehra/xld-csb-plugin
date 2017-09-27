@@ -69,7 +69,8 @@ public class CSBEventExporter {
 				sendToCSBFile(csbConfiguration, logEntry);
 			}
 		} catch (CSBPluginException ex) {
-			logger.info("API not reachable, logging deploy event to file");
+			logger.error("Error posting to web", ex);
+			logger.info("API not reachable or error occurred, logging deploy event to file");
 			sendToCSBFile(csbConfiguration, logEntry);
 		}
 
@@ -83,7 +84,7 @@ public class CSBEventExporter {
 	private void sendToCSBWeb(final CSBConfiguration csbConfiguration, final CSBLogEntry logEntry)
 			throws CSBPluginException {
 		logger.info("Sending deploy event to :" + csbConfiguration.getUrl());
-		csbWebExporter.logEntry(logEntry);
+		csbWebExporter.logEntry(csbConfiguration, logEntry);
 	}
 
 	private boolean isCSBAPIReachable(String url, int timeout) {
